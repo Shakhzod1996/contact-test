@@ -7,7 +7,6 @@ export const LoginContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-
     .real-text-field {
         margin-bottom: 30px;
     }

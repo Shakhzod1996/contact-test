@@ -34,8 +34,6 @@ export const ModalContainer = styled.div`
         }
     }
 
-    
-    
     .css-1d3z3hw-MuiOutlinedInput-notchedOutline {
         border: 1px solid #fff;
     }

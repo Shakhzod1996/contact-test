@@ -95,7 +95,7 @@ const SignUp = () => {
                         label="First Name"
                         variant="outlined"
                         type="text"
-                        name="name"
+                        name="firstName"
                         errors={errors}
                         rules={{
                             required: true,
@@ -107,7 +107,7 @@ const SignUp = () => {
                         label="Last Name"
                         variant="outlined"
                         type="lastName"
-                        name="password"
+                        name="lastName"
                         errors={errors}
                         rules={{
                             required: true,
@@ -126,9 +126,9 @@ const SignUp = () => {
 
                     <TextFieldCustom
                         control={control}
-                        label="Password"
+                        label="Create Password"
                         variant="outlined"
-                        type="text"
+                        type="password"
                         name="password"
                         errors={errors}
                         rules={{

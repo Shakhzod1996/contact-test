@@ -41,7 +41,7 @@ export const darkMode = {
 export const buttonSize = "16px";
 export const paragraphSize = "14px";
 export const miniSize = "12px";
-
+ 
 // ? Font weight
 export const ButtonWeight = "500";
 export const sixHundred = "600";
@@ -90,7 +90,7 @@ export const Container = styled.div`
 export const PrivateContainer = styled.div`
     padding: 1rem;
     padding-left: 30px;
-    padding-top: 95px;
+    padding-top: 200px;
 
 `;
 interface IAppProps {

@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
@@ -14,15 +14,18 @@ import Sidebar from "./sidebar/Sidebar";
 import Loading from "../components/elements/Loading";
 import GetUser from "../components/getUser/GetUser";
 import useGetUser from "../components/getUser/GetUser";
+import SearchBar from "../pages/home/components/searchBar/SearchBar";
 const Layout = () => {
     const ok = useGetUser();
     const { value } = useSelector((state: RootState) => state.sideBarData);
 
+
     return (
         <div>
-            <Header />
+            <Header/>
+            
             <Sidebar />
-            <Suspense fallback={<Loading />}>
+            {/* <Suspense fallback={<Loading />}> */}
                 <motion.div
                     animate={{
                         width: "100%",
@@ -34,7 +37,7 @@ const Layout = () => {
                         <Outlet />
                     </PrivateContainer>
                 </motion.div>
-            </Suspense>
+            {/* </Suspense> */}
 
             {/* <Footer /> */}
         </div>

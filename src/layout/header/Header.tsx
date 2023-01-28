@@ -1,27 +1,30 @@
 import { Button, Tooltip } from "@mui/material";
 import { motion } from "framer-motion";
-import React, {useState, useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RootState } from "../../features/store";
 import {
     HEADER_CLOSE,
-    HEADER_OPEN,
-    SIDEBAR_CLOSE,
-    SIDEBAR_OPEN,
+    HEADER_OPEN
 } from "../../style/global.style";
 import { HeaderContainer } from "./Header.style";
 // @ts-ignore
+import { AiOutlinePlus } from "react-icons/ai";
+// @ts-ignore
 import def from "./assets/default-user.png";
+import { changeStatusFunc } from "./components/HeaderSlice";
 import HeaderTitle from "./components/headerTitle/HeaderTitle";
 import SmallWindow from "./components/smallWindow/SmallWindow";
-import { AiOutlinePlus } from "react-icons/ai";
-import { changeStatusFunc } from "./components/HeaderSlice";
+
 const Header = () => {
     // ? Hooks
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  
     const [yOffset, setYOffset] = useState(window.pageYOffset);
     const [visible, setVisible] = useState(true);
+    
+    
 
     // ? Fetching Data
     const { data: userProfile } = useSelector((state: RootState) => state.user);
@@ -50,8 +53,6 @@ const Header = () => {
         window.location.reload();
     };
 
- 
-
     // ? Hide and Show on scroll
     useEffect(() => {
         window.addEventListener("scroll", handleScroll);
@@ -66,6 +67,8 @@ const Header = () => {
         setVisible(visible);
     }
 
+ 
+
     return (
         <HeaderContainer visible={visible}>
             <motion.div
@@ -75,7 +78,7 @@ const Header = () => {
                 <div className="header-in">
                     <HeaderTitle />
                     <div className="header-container-flex">
-                        <Button onClick={() => dispatch(changeStatusFunc())} variant="contained">
+                        <Button onClick={() => dispatch(changeStatusFunc())} variant="outlined">
                             <AiOutlinePlus />
                             Add
                         </Button>

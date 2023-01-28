@@ -1,16 +1,25 @@
 import styled from "styled-components";
 
 export const HomeContainer = styled.div`
-     .home-container {
-     }
+    .home-container {
+    }
 
-     .chart-container {
-          width: 100%;
-          height: 40vh;
-          margin-bottom: 50px;
+    .no-data {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        div {
+            text-align: center;
+            h2 {
+                margin-bottom: 1rem;
+                font-size: 30px;
+            }
 
-          h2  {
-               padding-left: 50px;
-          }
-     }
+            p {
+               font-size: 20px;
+               margin-bottom: 1rem;
+            }
+        }
+    }
 `;

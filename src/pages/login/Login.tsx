@@ -9,6 +9,8 @@ import TextFieldCustom from "../../components/form/TextField";
 import { useApiMutation } from "../../hooks";
 import { LoginContainer } from "./Loginstyle";
 import TextField from '@mui/material/TextField';
+import Skeleton from 'react-loading-skeleton'
+
 const Login = () => {
     const { mutate, data, isSuccess } = useApiMutation("admin/login", "post");
     const {
@@ -82,7 +84,9 @@ const Login = () => {
 
     return (
         <LoginContainer>
+           
             <motion.div animate={{ width: "500px" }} className="login-content">
+            
                 <h2>Sign In </h2>
                 <p>Welcome back! Please enter your details</p>
                 <form
@@ -104,7 +108,7 @@ const Login = () => {
                         control={control}
                         label="Password"
                         variant="outlined"
-                        type="text"
+                        type="password"
                         name="password"
                         errors={errors}
                         rules={{
