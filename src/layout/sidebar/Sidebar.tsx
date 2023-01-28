@@ -16,13 +16,10 @@ const Sidebar = () => {
 
     const {pathname} = useLocation()
     const { value } = useSelector((state: RootState) => state.sideBarData);
-    const {mutate, data, isSuccess } = useApiMutation("application/unseen", "get");
     const dispatch = useDispatch();
 
 
-    useEffect(() => {
-        mutate({})
-    }, [pathname])
+
     
 
     const showAnimation = {
@@ -80,6 +77,7 @@ const Sidebar = () => {
                     {routes.map((item) => {
                         return (
                             <Tooltip
+                            key={item.name}
                                 placement="left"
                                 title={value ? null : item.name}
                             >
@@ -109,27 +107,7 @@ const Sidebar = () => {
                                             >
                                                 
                                                 {item.name}
-                                                {data?.data?.total > 0 && (
-                                                    <>
-                                                        {item.name ===
-                                                            "Applications" && (
-                                                            <Chip
-                                                                sx={{
-                                                                    backgroundColor:
-                                                                        "#fff",
-                                                                    marginLeft:
-                                                                        "20px",
-                                                                        fontWeight: "600",
-                                                                        height: "22px"
-                                                                }}
-                                                                label={
-                                                                    data?.data
-                                                                        ?.total
-                                                                }
-                                                            />
-                                                        )}
-                                                    </>
-                                                )}
+                                              
                                             </motion.div>
                                         )}
                                     </AnimatePresence>

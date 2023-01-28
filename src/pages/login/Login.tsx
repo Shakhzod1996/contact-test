@@ -1,15 +1,13 @@
 import Button from "@mui/material/Button";
+import TextField from '@mui/material/TextField';
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { NumericFormat } from "react-number-format";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TextFieldCustom from "../../components/form/TextField";
 import { useApiMutation } from "../../hooks";
 import { LoginContainer } from "./Loginstyle";
-import TextField from '@mui/material/TextField';
-import Skeleton from 'react-loading-skeleton'
 
 const Login = () => {
     const { mutate, data, isSuccess } = useApiMutation("admin/login", "post");

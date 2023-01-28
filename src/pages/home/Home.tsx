@@ -16,7 +16,7 @@ const Home = () => {
     const { isBarOpen } = useSelector((state: RootState) => state.headerInfo);
     const [isModalOpen, setIsMOdalOpen] = useState(false);
     const isDataCome = true;
-    const loading = true;
+    const loading = false;
 
     return (
         <HomeContainer>

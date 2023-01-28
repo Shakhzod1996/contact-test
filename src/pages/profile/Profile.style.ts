@@ -2,14 +2,14 @@ import { lightMode } from './../../style/global.style';
 import styled from "styled-components";
 
 export const ProfileContainer = styled.div `
-padding-top: 20px;
+margin-top: -80px;
     h1{
         margin-bottom: 20px;
     }
 .profile-main {
     width: 70%;
     height: 500px;
-    background-color: #fff;
+    background-color: ${lightMode.primaryColor2};
     box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
     border-radius: 20px;
     
@@ -39,7 +39,7 @@ padding-top: 20px;
     height: 200px;
     border-radius: 50%;
     margin-top: -100px;
-    border: 6px solid #fff;
+    border: 6px solid ${lightMode.primaryColor2};
     position: relative;
      img {
         width: 100%;

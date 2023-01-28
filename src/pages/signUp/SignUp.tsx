@@ -10,7 +10,7 @@ import { useApiMutation } from "../../hooks";
 import { LoginContainer } from "./Loginstyle";
 import TextField from "@mui/material/TextField";
 const SignUp = () => {
-    const { mutate, data, isSuccess } = useApiMutation("admin/login", "post");
+    const { mutate, data, isSuccess } = useApiMutation("/user", "post");
     const {
         control,
         handleSubmit,
@@ -20,21 +20,24 @@ const SignUp = () => {
     interface IForm {
         phoneNumber: string;
         password: string;
+        lastName: string    
+        firstName: string
     }
 
-    const submitHandler = ({ phoneNumber, password }: IForm) => {
-        console.log({ phoneNumber, password });
+    const submitHandler = ({ phoneNumber, password, firstName, lastName }: IForm) => {
 
         mutate({
             phoneNumber: inputValue,
             password,
+            firstName,
+            lastName
         });
     };
 
     useEffect(() => {
         if (isSuccess) {
-            toast.success("Logged in successfully");
-            navigate("/");
+            toast.success("Successfully registered and now just log in");
+            navigate("/login");
             localStorage.setItem("token", data?.data.token);
         }
     }, [isSuccess]);

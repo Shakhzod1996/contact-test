@@ -1,24 +1,20 @@
-import { Box, Button, Menu, MenuItem, Modal, Typography } from "@mui/material";
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../features/store";
-import { ProfileContainer } from "./Profile.style";
+import { Box, Button, Menu, MenuItem, Modal } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { useDispatch } from "react-redux";
+import { ProfileContainer } from "./Profile.style";
 // @ts-ignore
-import def from "./assets/default-user.png";
-import { useApiMutation } from "../../hooks";
-import TextField from "../../components/form/TextField";
+import axios from "axios";
+import ReactCodeInput from "react-code-input";
 import { useForm } from "react-hook-form";
 import { BiCamera } from "react-icons/bi";
-import axios from "axios";
-import useGetUser from "../../components/getUser/GetUser";
-import { getUserFunc } from "../../components/getUser/GetUserSlice";
 import { toast } from "react-toastify";
-import ReactCodeInput from "react-code-input";
+import TextField from "../../components/form/TextField";
+import { useApiMutation } from "../../hooks";
+// @ts-ignore
+import def from "./assets/default-user.png";
 const Profile = () => {
-    const { refetch } = useGetUser();
     const dispatch = useDispatch();
-    const { data: userProfile } = useSelector((state: RootState) => state.user);
     interface IForm {
         firstName?: string;
         lastName?: string;
@@ -75,10 +71,10 @@ const Profile = () => {
 
     const EditHandler = () => {
         setAnchorEl(null);
-        reset({
-            firstName: userProfile?.firstName,
-            lastName: userProfile?.lastName,
-        });
+        // reset({
+        //     firstName: userProfile?.firstName,
+        //     lastName: userProfile?.lastName,
+        // });
         setOpened(true);
     };
 
@@ -91,9 +87,9 @@ const Profile = () => {
 
     const privacyClickHandler = () => {
         setAnchorEl(null);
-        reset({
-            phoneNumber: userProfile?.phoneNumber,
-        });
+        // reset({
+        //     phoneNumber: userProfile?.phoneNumber,
+        // });
         setPrivacyOpen(true);
         mutate({});
     };
@@ -122,9 +118,9 @@ const Profile = () => {
                     imgUrl: res.data.data,
                 });
 
-                dispatch(
-                    getUserFunc({ ...userProfile, imgUrl: res.data.data })
-                );
+            //     dispatch(
+            //         // getUserFunc({ ...userProfile, imgUrl: res.data.data })
+            //     );
             });
         }
     }, [image]);
@@ -150,15 +146,15 @@ const Profile = () => {
             lastName: data?.lastName,
         });
 
-        dispatch(
-            getUserFunc({
-                ...userProfile,
-                // @ts-ignore
-                firstName: data.firstName,
-                // @ts-ignore
-                lastName: data?.lastName,
-            })
-        );
+        // dispatch(
+        //     // getUserFunc({
+        //     //     ...userProfile,
+        //     //     // @ts-ignore
+        //     //     firstName: data.firstName,
+        //     //     // @ts-ignore
+        //     //     lastName: data?.lastName,
+        //     // })
+        // );
     };
 
     const changedHandler = (e: any) => {
@@ -172,13 +168,13 @@ const Profile = () => {
             otp: inputVal,
         });
 
-        dispatch(
-            getUserFunc({
-                ...userProfile,
-                // @ts-ignore
-                phoneNumber: data?.phoneNumber,
-            })
-        );
+        // dispatch(
+        //     getUserFunc({
+        //         ...userProfile,
+        //         // @ts-ignore
+        //         phoneNumber: data?.phoneNumber,
+        //     })
+        // );
     };
 
     const props = {
@@ -240,7 +236,7 @@ const Profile = () => {
                                         height: "40px",
                                         bottom: "10px",
                                         right: "10px",
-                                        background: "#fff",
+                                        background: "#3f4f56",
                                         borderRadius: "50%",
                                         cursor: "pointer",
                                         boxShadow:
@@ -267,7 +263,6 @@ const Profile = () => {
                                 style={{objectFit: "cover"}}
                                     src={`${process.env.REACT_APP_BASE_URL}public/uploads/${
                                         uploadedImg ||
-                                        userProfile?.imgUrl ||
                                         def
                                     }`}
                                     alt="img"
@@ -276,14 +271,17 @@ const Profile = () => {
 
                             <div>
                                 <h2>
-                                    {userProfile?.firstName}{" "}
-                                    {userProfile.lastName}
+                                    Shaxzod
+                                    {/* {userProfile?.firstName}{" "}
+                                    {userProfile.lastName} */}
+                                    Muradov
                                 </h2>
-                                <h3>{userProfile?.phoneNumber}</h3>
+                                <h3>901020440</h3>
                             </div>
                         </div>
 
                         <Button
+                        variant="outlined"
                             id="basic-button"
                             aria-controls={open ? "basic-menu" : undefined}
                             aria-haspopup="true"

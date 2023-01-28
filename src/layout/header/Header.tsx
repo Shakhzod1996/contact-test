@@ -4,10 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../features/store";
-import {
-    HEADER_CLOSE,
-    HEADER_OPEN
-} from "../../style/global.style";
+import { HEADER_CLOSE, HEADER_OPEN } from "../../style/global.style";
 import { HeaderContainer } from "./Header.style";
 // @ts-ignore
 import { AiOutlinePlus } from "react-icons/ai";
@@ -20,14 +17,11 @@ import SmallWindow from "./components/smallWindow/SmallWindow";
 const Header = () => {
     // ? Hooks
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  
+
     const [yOffset, setYOffset] = useState(window.pageYOffset);
     const [visible, setVisible] = useState(true);
-    
-    
 
     // ? Fetching Data
-    const { data: userProfile } = useSelector((state: RootState) => state.user);
 
     // ?Redux
     const { value } = useSelector((state: RootState) => state.sideBarData);
@@ -67,8 +61,6 @@ const Header = () => {
         setVisible(visible);
     }
 
- 
-
     return (
         <HeaderContainer visible={visible}>
             <motion.div
@@ -78,7 +70,10 @@ const Header = () => {
                 <div className="header-in">
                     <HeaderTitle />
                     <div className="header-container-flex">
-                        <Button onClick={() => dispatch(changeStatusFunc())} variant="outlined">
+                        <Button
+                            onClick={() => dispatch(changeStatusFunc())}
+                            variant="outlined"
+                        >
                             <AiOutlinePlus />
                             Add
                         </Button>
@@ -94,11 +89,7 @@ const Header = () => {
                             >
                                 <img
                                     style={{ objectFit: "cover" }}
-                                    src={
-                                        userProfile?.imgUrl
-                                            ? `${process.env.REACT_APP_BASE_URL}public/uploads/${userProfile?.imgUrl}`
-                                            : def
-                                    }
+                                    src={def}
                                     alt="img"
                                 />
                             </div>

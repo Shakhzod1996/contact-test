@@ -1,4 +1,3 @@
-import { Suspense, useEffect, useState } from "react";
 
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
@@ -7,16 +6,11 @@ import { RootState } from "../features/store";
 import {
     PrivateContainer,
     SIDEBAR_CLOSE,
-    SIDEBAR_OPEN,
+    SIDEBAR_OPEN
 } from "../style/global.style";
 import Header from "./header/Header";
 import Sidebar from "./sidebar/Sidebar";
-import Loading from "../components/elements/Loading";
-import GetUser from "../components/getUser/GetUser";
-import useGetUser from "../components/getUser/GetUser";
-import SearchBar from "../pages/home/components/searchBar/SearchBar";
 const Layout = () => {
-    const ok = useGetUser();
     const { value } = useSelector((state: RootState) => state.sideBarData);
 
 

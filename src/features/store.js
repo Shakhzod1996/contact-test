@@ -1,12 +1,12 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import sidebarReducer from "../layout/sidebar/SidebarSlice";
-import getUserReducer from "../components/getUser/GetUserSlice";
 import  headerReducer  from "../layout/header/components/HeaderSlice";
+import LoginReducer from "../pages/login/LoginSlice";
 export const store = configureStore({
     reducer: {
         sideBarData: sidebarReducer,
-        user: getUserReducer,
-        headerInfo: headerReducer
+        headerInfo: headerReducer,
+        loginInfo: LoginReducer
     },
 
     middleware: getDefaultMiddleware({

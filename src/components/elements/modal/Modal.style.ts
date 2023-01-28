@@ -8,7 +8,29 @@ export const ModalContainer = styled.div`
         width: 50vw;
         background-color: ${lightMode.primaryColor2};
         z-index: 444;
-        
+
+        .image-father {
+            /* margin-top: 60px; */
+            text-align: center;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+
+        }
+        .image-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 6px solid ${lightMode.primaryColor};
+            position: relative;
+            img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+            }
+        }
 
         border-radius: 1rem;
         header {
