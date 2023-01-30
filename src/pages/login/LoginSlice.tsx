@@ -1,26 +1,35 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IProps {
-    firstName: string,
+    firstName: string;
     lastName: string;
-    image?: string;
+    image: string;
     phoneNumber: string;
+    _id: string;
 }
 
-const initialState:IProps = {
+const initialState: IProps = {
     firstName: "",
     lastName: "",
     image: "",
     phoneNumber: "",
+    _id: "" 
 };
 
 export const loginSlice = createSlice({
     name: "login",
     initialState,
     reducers: {
-        setUserFunc: (state, {payload}: PayloadAction<IProps>) => {
-             
-        }
+        setUserFunc: (state, { payload }: PayloadAction<IProps>) => {
+            state.firstName = payload.firstName;
+            state.lastName = payload.lastName;
+            state.phoneNumber = payload.phoneNumber;
+            state.image = payload.image;
+            state._id = payload._id
+
+            console.log("payload",payload.image);
+            
+        },
     },
 });
 

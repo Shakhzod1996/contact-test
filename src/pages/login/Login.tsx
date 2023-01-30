@@ -3,14 +3,17 @@ import TextField from '@mui/material/TextField';
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TextFieldCustom from "../../components/form/TextField";
 import { useApiMutation } from "../../hooks";
+import { setUserFunc } from "./LoginSlice";
 import { LoginContainer } from "./Loginstyle";
 
 const Login = () => {
-    const { mutate, data, isSuccess } = useApiMutation("admin/login", "post");
+    const dispatch = useDispatch()
+    const { mutate, data, isSuccess } = useApiMutation("/user/login", "post");
     const {
         control,
         handleSubmit,
@@ -23,7 +26,7 @@ const Login = () => {
     }
 
     const submitHandler = ({ phoneNumber, password }: IForm) => {
-        console.log({ phoneNumber, password });
+        
 
         mutate({
             phoneNumber: inputValue,
@@ -36,6 +39,7 @@ const Login = () => {
             toast.success("Logged in successfully");
             navigate("/");
             localStorage.setItem("token", data?.data.token);
+            dispatch(setUserFunc(data?.data.data))
         }
     }, [isSuccess]);
 

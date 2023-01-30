@@ -9,6 +9,7 @@ export const HomeContainer = styled.div`
         align-items: center;
         justify-content: center;
         width: 100%;
+        height: 50vh;
         div {
             text-align: center;
             h2 {

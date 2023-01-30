@@ -2,19 +2,20 @@ import { Button, Tooltip } from "@mui/material";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { RootState } from "../../features/store";
 import { HEADER_CLOSE, HEADER_OPEN } from "../../style/global.style";
 import { HeaderContainer } from "./Header.style";
 // @ts-ignore
 import { AiOutlinePlus } from "react-icons/ai";
 // @ts-ignore
-import def from "./assets/default-user.png";
+import def from "../../assets/images/user.jpg";
 import { changeStatusFunc } from "./components/HeaderSlice";
 import HeaderTitle from "./components/headerTitle/HeaderTitle";
 import SmallWindow from "./components/smallWindow/SmallWindow";
 
 const Header = () => {
+    const { pathname } = useLocation();
     // ? Hooks
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -25,6 +26,10 @@ const Header = () => {
 
     // ?Redux
     const { value } = useSelector((state: RootState) => state.sideBarData);
+    const { image, firstName } = useSelector(
+        (state: RootState) => state.loginInfo
+    );
+
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
@@ -70,14 +75,17 @@ const Header = () => {
                 <div className="header-in">
                     <HeaderTitle />
                     <div className="header-container-flex">
-                        <Button
-                            onClick={() => dispatch(changeStatusFunc())}
-                            variant="outlined"
-                        >
-                            <AiOutlinePlus />
-                            Add
-                        </Button>
-                        <Tooltip placement="left" title="Profile">
+                        {pathname.includes("profile") ? null : (
+                            <Button
+                                onClick={() => dispatch(changeStatusFunc())}
+                                variant="outlined"
+                            >
+                                <AiOutlinePlus />
+                                Add
+                            </Button>
+                        )}
+
+                        <Tooltip placement="left" title={firstName}>
                             <div
                                 id="basic-button"
                                 aria-controls={open ? "basic-menu" : undefined}
@@ -89,7 +97,11 @@ const Header = () => {
                             >
                                 <img
                                     style={{ objectFit: "cover" }}
-                                    src={def}
+                                    src={
+                                        image
+                                            ? `${process.env.REACT_APP_BASE_URL}/public/uploads/${image}`
+                                            : def
+                                    }
                                     alt="img"
                                 />
                             </div>

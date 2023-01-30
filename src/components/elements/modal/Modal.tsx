@@ -1,6 +1,3 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import BackDrop from "../backDrop/BackDrop";
 import {
     Button,
     FormControl,
@@ -9,42 +6,127 @@ import {
     MenuItem,
     Select,
     SelectChangeEvent,
+    TextField,
 } from "@mui/material";
-import TextField from "../../form/TextField";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { Dispatch, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changeStatusFunc } from "../../../layout/header/components/HeaderSlice";
+import TextFieldCustomer from "../../form/TextField";
+import BackDrop from "../backDrop/BackDrop";
 import { ModalContainer } from "./Modal.style";
-import { BiCameraHome } from "react-icons/bi";
+// @ts-ignore
+import { BiCamera } from "react-icons/bi";
+import { toast } from "react-toastify";
+// @ts-ignore
+import axios, { AxiosResponse } from "axios";
 // @ts-ignore
 import def from "../../../assets/images/user.jpg";
-import { BiCamera } from "react-icons/bi";
+import { RootState } from "../../../features/store";
+import { useApiMutation } from "../../../hooks";
+import { editChangeStatus } from "../../../pages/home/ContactsSlice";
+import { IContactForm } from "../../../pages/home/types/Contact.types";
+import { IRelation } from "./types/Relation.types";
 
 interface IModalProps {
     isBarOpen: boolean;
     editUrl?: string;
-    postUrl?: string;
+    postUrl: string;
+    setEditId: Dispatch<React.SetStateAction<string | undefined>>;
+    editId: string | undefined;
+    refetch: () => void;
+    relationShipData: AxiosResponse<IRelation[], any> | undefined;
+    isSuccess: boolean;
 }
 
-const Modal: React.FC<IModalProps> = ({ isBarOpen, editUrl, postUrl }) => {
-    const [age, setAge] = React.useState("");
+const Modal: React.FC<IModalProps> = ({
+    isBarOpen,
+    editUrl,
+    postUrl,
+    setEditId,
+    editId,
+    refetch,
+    relationShipData,
+    isSuccess,
+}) => {
+    // ! redux
+    const { data: relationData } = useSelector(
+        (state: RootState) => state.relation
+    );
 
+    const { _id } = useSelector((state: RootState) => state.loginInfo);
+    const { selectedItems, editStatus } = useSelector(
+        (state: RootState) => state.contacts
+    );
+
+    // ! Hooks
+    const [selectId, setSelectId] = useState("");
+    const [formValues, setFormValues] = useState<any>("");
+    const [editIdLocal, setEditIdlocal] = useState<string>(selectedItems._id);
+    const dispatch = useDispatch();
     const [image, setImage] = useState<File>();
     const [uploadedImg, setUploadedImg] = useState<string>("");
-    const dispatch = useDispatch();
+
+    // !Fetch Data
+    const {
+        data: postData,
+        isSuccess: postSuccess,
+        mutate: postMutate,
+    } = useApiMutation(postUrl, "post");
+
+    const {
+        data: putData,
+        isSuccess: putSuccess,
+        mutate: putMutate,
+    } = useApiMutation(editUrl + "/" + editIdLocal, "put");
+
+    useEffect(() => {
+        if (editStatus) {
+            reset({
+                email: selectedItems.email,
+                firstName: selectedItems.firstName,
+                lastName: selectedItems.lastName,
+                image: selectedItems.image,
+                phoneNumber: selectedItems.phoneNumber,
+            });
+            setEditIdlocal(selectedItems._id);
+        }
+    }, [editStatus]);
+
+    // ! Hook Form
     const {
         control,
         handleSubmit,
         formState: { errors },
         setValue,
         reset,
-    } = useForm<any>();
+        getValues,
+    } = useForm<IContactForm>();
 
-    // ? CLose modal
-    const closeModalHandler = () => {
-        dispatch(changeStatusFunc());
-    };
+    // !LifeCircle
 
+    useEffect(() => {
+        if (postSuccess) {
+            toast.success("Contact created Successfully");
+            dispatch(changeStatusFunc());
+
+            refetch();
+            ClearFunction();
+        }
+    }, [postSuccess]);
+
+    useEffect(() => {
+        if (putSuccess) {
+            toast.success("Contact updated Successfully");
+            dispatch(changeStatusFunc());
+            refetch();
+            ClearFunction();
+            dispatch(editChangeStatus());
+        }
+    }, [putSuccess]);
+    
+    // ? Animation
     const dropIn = {
         hidden: {
             y: "-100vh",
@@ -66,15 +148,85 @@ const Modal: React.FC<IModalProps> = ({ isBarOpen, editUrl, postUrl }) => {
         },
     };
 
+    // ! Functions
+    // ? Clear Function
+    const ClearFunction = () => {
+        reset({
+            firstName: "",
+            lastName: "",
+            phoneNumber: "",
+            email: "",
+        });
+        setEditIdlocal("");
+        setEditId(undefined);
+        setSelectId("");
+        setUploadedImg("");
+        setImage(undefined);
+    };
+
+    // ? CLose modal
+    const closeModalHandler = () => {
+        dispatch(editChangeStatus());
+        dispatch(changeStatusFunc());
+        ClearFunction();
+    };
+    // ? Open Modal
     const clickModal = (e: any) => {
         e.stopPropagation();
     };
 
+    // ? Select Change
     const handleChange = (event: SelectChangeEvent) => {
-        setAge(event.target.value as string);
+        setSelectId(event.target.value);
     };
 
-    const submitHandler = () => {};
+    // ?Adding Image
+    useEffect(() => {
+        if (image) {
+            axios({
+                url: `${process.env.REACT_APP_BASE_URL}/upload`,
+                method: "POST",
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                data: {
+                    file: image,
+                    type: "img",
+                },
+            }).then((res) => {
+                setUploadedImg(res.data.data);
+            });
+        }
+    }, [image]);
+
+    // ? Submit Function
+    const submitHandler = (data: IContactForm) => {
+        if (editId) {
+            putMutate({
+                firstName: data.firstName,
+                lastName: data.lastName,
+                phoneNumber: data.phoneNumber,
+                email: data.email,
+                userId: _id,
+                relationshipId: selectId,
+                image: uploadedImg || image,
+            });
+        } else {
+            postMutate({
+                firstName: data.firstName,
+                lastName: data.lastName,
+                phoneNumber: data.phoneNumber,
+                email: data.email,
+                userId: _id,
+                relationshipId: selectId,
+                image: uploadedImg || image,
+            });
+        }
+
+        setFormValues(getValues());
+    };
+
     return (
         <ModalContainer>
             <AnimatePresence
@@ -103,7 +255,9 @@ const Modal: React.FC<IModalProps> = ({ isBarOpen, editUrl, postUrl }) => {
                                         Close
                                     </Button>
                                     <h2 style={{ color: "#fff" }}>
-                                        Add Contact
+                                        {editId
+                                            ? "Edit Contact"
+                                            : "Add Contact"}
                                     </h2>
                                     <Button
                                         variant="contained"
@@ -163,18 +317,27 @@ const Modal: React.FC<IModalProps> = ({ isBarOpen, editUrl, postUrl }) => {
                                                                 : null
                                                         }
                                                     />
+
                                                     <img
+                                                        src={
+                                                            editId &&
+                                                            uploadedImg
+                                                                ? ` ${process.env.REACT_APP_BASE_URL}/public/uploads/${uploadedImg} `
+                                                                : editId && selectedItems.image
+                                                                ? ` ${process.env.REACT_APP_BASE_URL}/public/uploads/${selectedItems.image} `
+                                                                : def
+                                                        }
                                                         style={{
-                                                            objectFit: "cover",
+                                                            width: "100%",
+                                                            height: "100%",
                                                         }}
-                                                        src={def}
-                                                        alt="img"
+                                                        alt="uploadedImg"
                                                     />
                                                 </div>
                                             </div>
                                         </Grid>
                                         <Grid item xs={8}>
-                                            <TextField
+                                            <TextFieldCustomer
                                                 fullWidth
                                                 control={control}
                                                 dark={false}
@@ -188,7 +351,7 @@ const Modal: React.FC<IModalProps> = ({ isBarOpen, editUrl, postUrl }) => {
                                                 }}
                                             />
 
-                                            <TextField
+                                            <TextFieldCustomer
                                                 fullWidth
                                                 control={control}
                                                 name="lastName"
@@ -205,7 +368,7 @@ const Modal: React.FC<IModalProps> = ({ isBarOpen, editUrl, postUrl }) => {
                                     </Grid>
 
                                     <div>
-                                        <TextField
+                                        <TextFieldCustomer
                                             fullWidth
                                             control={control}
                                             name="phoneNumber"
@@ -213,13 +376,13 @@ const Modal: React.FC<IModalProps> = ({ isBarOpen, editUrl, postUrl }) => {
                                             dark={false}
                                             variant="outlined"
                                             errors={errors}
-                                            type="number"
+                                            type="text"
                                             rules={{
                                                 required: true,
                                             }}
                                         />
 
-                                        <TextField
+                                        <TextFieldCustomer
                                             fullWidth
                                             control={control}
                                             name="email"
@@ -227,37 +390,69 @@ const Modal: React.FC<IModalProps> = ({ isBarOpen, editUrl, postUrl }) => {
                                             dark={false}
                                             variant="outlined"
                                             errors={errors}
-                                            type="number"
+                                            required
+                                            type="email"
                                             rules={{
                                                 required: true,
                                             }}
                                         />
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                gap: "15px",
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <FormControl
+                                                style={{
+                                                    width: `${
+                                                        editId ? "100%" : "60%"
+                                                    }`,
+                                                }}
+                                            >
+                                                <InputLabel
+                                                    sx={{ color: "#fff" }}
+                                                    id="demo-simple-select-label"
+                                                >
+                                                    Relationship
+                                                </InputLabel>
+                                                <Select
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={selectId}
+                                                    label="Age"
+                                                    onChange={handleChange}
+                                                >
+                                                    {relationShipData?.data.map(
+                                                        (item) => {
+                                                            return (
+                                                                <MenuItem
+                                                                    key={
+                                                                        item._id
+                                                                    }
+                                                                    value={
+                                                                        item._id
+                                                                    }
+                                                                >
+                                                                    {item.name}
+                                                                </MenuItem>
+                                                            );
+                                                        }
+                                                    )}
+                                                </Select>
+                                            </FormControl>
+                                            {editId ? null : <p>or</p>}
 
-                                        <FormControl fullWidth>
-                                            <InputLabel
-                                                sx={{ color: "#fff" }}
-                                                id="demo-simple-select-label"
-                                            >
-                                                Status
-                                            </InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                value={age}
-                                                label="Age"
-                                                onChange={handleChange}
-                                            >
-                                                <MenuItem value={10}>
-                                                    Ten
-                                                </MenuItem>
-                                                <MenuItem value={20}>
-                                                    Twenty
-                                                </MenuItem>
-                                                <MenuItem value={30}>
-                                                    Thirty
-                                                </MenuItem>
-                                            </Select>
-                                        </FormControl>
+                                            {editId ? null : (
+                                                <TextField
+                                                    style={{ width: "40%" }}
+                                                    name="relative"
+                                                    label="Enter relationship"
+                                                    variant="outlined"
+                                                    type="text"
+                                                />
+                                            )}
+                                        </div>
                                     </div>
                                 </main>
                             </form>

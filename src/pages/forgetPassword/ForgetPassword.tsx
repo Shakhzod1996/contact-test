@@ -11,7 +11,7 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 
 const ForgetPassword = () => {
-    const { mutate, data, isSuccess } = useApiMutation("admin/forget", "put");
+    const { mutate, data, isSuccess } = useApiMutation("user/forget", "put");
     const {
         control,
         handleSubmit,
@@ -23,10 +23,10 @@ const ForgetPassword = () => {
     }
 
     const submitHandler = ({ phoneNumber }: IForm) => {
-        let inputValue = "(998)90-102-04-40";
-        const inputArr = inputValue.split("");
+        let inputValue1 = inputValue;
+        const inputArr = inputValue1.split("");
 
-        const removeValFromIndex = [0, 4, 7, 11, 14];
+        const removeValFromIndex = [0, 4,5, 8, 12, 15];
         for (let i = removeValFromIndex.length - 1; i >= 0; i--) {
             inputArr.splice(removeValFromIndex[i], 1);
         }

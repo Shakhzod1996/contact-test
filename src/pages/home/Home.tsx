@@ -2,42 +2,79 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../components/elements/modal/Modal";
+import { IRelation } from "../../components/elements/modal/types/Relation.types";
 import { RootState } from "../../features/store";
-import SearchBar from "./components/searchBar/SearchBar";
+import { useApi } from "../../hooks";
 import ContactItem from "./components/contactItem/ContactItem";
-import { HomeContainer } from "./Home.styled";
-import DeleteModal from "./components/deleteModal/DeleteModal";
-import { Button } from "@mui/material";
-import { changeStatusFunc } from "../../layout/header/components/HeaderSlice";
 import ContactSkeleton from "./components/contactItemSkeleton/ContactItem";
+import DeleteModal from "./components/deleteModal/DeleteModal";
+import SearchBar from "./components/searchBar/SearchBar";
+import { HomeContainer } from "./Home.styled";
+import { IOneContact } from "./types/Contact.types";
 
 const Home = () => {
     const dispatch = useDispatch();
+    // !Hooks
+    const [search, setSearchValue] = useState("");
+    const [editId, setEditId] = useState<string | undefined>("");
+
+    // ! Redux data
     const { isBarOpen } = useSelector((state: RootState) => state.headerInfo);
+    const { selectedId } = useSelector((state: RootState) => state.contacts);
+
+    // ! Fetching Data
+    const { data, isSuccess, refetch, isLoading } = useApi<IOneContact[]>(
+        "contact",
+        {
+            search,
+            relationshipId: selectedId
+        }
+    );
+
+    const { data: relationShipData, isSuccess: relateSuccess } =
+        useApi<IRelation[]>("relationship");
+
+    
+
+
     const [isModalOpen, setIsMOdalOpen] = useState(false);
-    const isDataCome = true;
-    const loading = false;
 
     return (
         <HomeContainer>
             <motion.div animate={{ width: "100%" }} className="chart-container">
-                <Modal isBarOpen={isBarOpen} />
-                {isDataCome ? (
+                <Modal
+                    setEditId={setEditId}
+                    editId={editId}
+                    isBarOpen={isBarOpen}
+                    postUrl="/contact"
+                    editUrl="/contact"
+                    refetch={refetch}
+                    relationShipData={relationShipData}
+                    isSuccess={relateSuccess}
+                />
+
+                <SearchBar
+                    setSearchValue={setSearchValue}
+                    searchValue={search}
+                    relationShipData={relationShipData}
+                />
+                {data?.data && data?.data.length > 0 ? (
                     <>
-                        {" "}
-                        <SearchBar />
                         <DeleteModal
                             isModalOpen={isModalOpen}
                             setIsMOdalOpen={setIsMOdalOpen}
+                            refetch={refetch}
                         />
-                        {loading ? (
+                        {isLoading ? (
                             <ContactSkeleton />
                         ) : (
                             <>
-                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((item) => {
+                                {data?.data.map((item) => {
                                     return (
                                         <ContactItem
-                                            key={item}
+                                            setEditId={setEditId}
+                                            item={item}
+                                            key={item._id}
                                             setIsMOdalOpen={setIsMOdalOpen}
                                         />
                                     );
@@ -49,14 +86,8 @@ const Home = () => {
                 ) : (
                     <div className="no-data">
                         <div>
-                            <h2>Do not Have Any Contacts Yet</h2>
-                            <p>Press Button Below and Start Adding Contacts</p>
-                            <Button
-                                variant="outlined"
-                                onClick={() => dispatch(changeStatusFunc())}
-                            >
-                                Start Adding Contact
-                            </Button>
+                            <h2>Not Found !</h2>
+                            <p>Not Any Contacts found</p>
                         </div>
                     </div>
                 )}

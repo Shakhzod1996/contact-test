@@ -1,14 +1,26 @@
-import { AnimatePresence,motion } from "framer-motion";
-import React, { Dispatch, SetStateAction } from "react";
-import { DeleteModalContainer } from "./Delete.tyle";
-import BackDrop from "../../../../components/elements/backDrop/BackDrop";
 import { Button } from "@mui/material";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import BackDrop from "../../../../components/elements/backDrop/BackDrop";
+import { RootState } from "../../../../features/store";
+import { useApiMutation } from "../../../../hooks";
+import { DeleteModalContainer } from "./Delete.tyle";
 interface IPropsMOdal {
     isModalOpen: boolean;
-    setIsMOdalOpen: Dispatch<SetStateAction<boolean>>
+    setIsMOdalOpen: Dispatch<SetStateAction<boolean>>;
+    refetch: () => void
 }
-const DeleteModal: React.FC<IPropsMOdal> = ({ isModalOpen ,setIsMOdalOpen }) => {
+const DeleteModal: React.FC<IPropsMOdal> = ({
+    isModalOpen,
+    setIsMOdalOpen,
+    refetch
+}) => {
+    const dispatch = useDispatch();
+    const { _id } = useSelector((state: RootState) => state.contacts);
 
+    const { data, isSuccess, mutate } = useApiMutation("/contact", "delete");
     const dropIn = {
         hidden: {
             y: "-100vh",
@@ -29,8 +41,23 @@ const DeleteModal: React.FC<IPropsMOdal> = ({ isModalOpen ,setIsMOdalOpen }) => 
             opacity: 0,
         },
     };
+
+    useEffect(() => {
+        if (isSuccess) {
+            toast.success("deleted successfully");
+            setIsMOdalOpen(false);
+            refetch()
+        }
+    }, [isSuccess]);
+
     const clickModal = (e: any) => {
         e.stopPropagation();
+    };
+
+    const DeleteHandler = () => {
+        mutate({
+            _ids: [_id],
+        });
     };
     return (
         <DeleteModalContainer>
@@ -39,27 +66,40 @@ const DeleteModal: React.FC<IPropsMOdal> = ({ isModalOpen ,setIsMOdalOpen }) => 
                 exitBeforeEnter={true}
                 onExitComplete={() => null}
             >
-                {isModalOpen && <BackDrop onClick={() => setIsMOdalOpen(false)}>
-                    <motion.div variants={dropIn}
+                {isModalOpen && (
+                    <BackDrop onClick={() => setIsMOdalOpen(false)}>
+                        <motion.div
+                            variants={dropIn}
                             animate="visible"
                             initial="hidden"
                             exit="exit"
                             onClick={clickModal}
-                            key={"div"} className="delete-content">
-                        <h2>Delete Contact</h2>
-                        <p>Would You like to delete this contact permenantly ?</p>
+                            key={"div"}
+                            className="delete-content"
+                        >
+                            <h2>Delete Contact</h2>
+                            <p>
+                                Would You like to delete this contact
+                                permenantly ?
+                            </p>
 
-                        <div className="btns-container">
-                            <Button onClick={() => setIsMOdalOpen(false)}>Cancel</Button>
-                            <Button variant="outlined" color="error">Delete</Button>
+                            <div className="btns-container">
+                                <Button onClick={() => setIsMOdalOpen(false)}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={DeleteHandler}
+                                    variant="outlined"
+                                    color="error"
+                                >
+                                    Delete
+                                </Button>
+                            </div>
 
-                        </div>
-
-                        <div>
-
-                        </div>
-                    </motion.div>
-                    </BackDrop>}
+                            <div></div>
+                        </motion.div>
+                    </BackDrop>
+                )}
             </AnimatePresence>
         </DeleteModalContainer>
     );

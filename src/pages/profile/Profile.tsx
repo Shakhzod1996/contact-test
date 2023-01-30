@@ -1,7 +1,7 @@
 import { Box, Button, Menu, MenuItem, Modal } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ProfileContainer } from "./Profile.style";
 // @ts-ignore
 import axios from "axios";
@@ -12,9 +12,21 @@ import { toast } from "react-toastify";
 import TextField from "../../components/form/TextField";
 import { useApiMutation } from "../../hooks";
 // @ts-ignore
-import def from "./assets/default-user.png";
+import def from "../../assets/images/user.jpg";
+import { RootState } from "../../features/store";
+import { setUserFunc } from "../login/LoginSlice";
+
 const Profile = () => {
     const dispatch = useDispatch();
+
+    const {
+        image: imageURL,
+        firstName,
+        lastName,
+        phoneNumber,
+        _id,
+    } = useSelector((state: RootState) => state.loginInfo);
+
     interface IForm {
         firstName?: string;
         lastName?: string;
@@ -32,23 +44,22 @@ const Profile = () => {
         mutate: putMutate,
         data: putdataImage,
         isSuccess: successPut,
-    } = useApiMutation("admin", "put");
+    } = useApiMutation("user", "put");
 
     const {
         mutate,
         data: backdata,
         isSuccess,
-    } = useApiMutation("admin/sendOtp", "post");
+    } = useApiMutation("user/sendOtp", "post");
 
     const {
         mutate: passwordMutate,
         data: passwordData,
         isSuccess: passwordSuccess,
-    } = useApiMutation("admin/password", "put");
+    } = useApiMutation("user/password", "put");
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [image, setImage] = useState<File>();
-    const [uploadedImg, setUploadedImg] = useState<string>("");
 
     // ? Modal
     const [opened, setOpened] = React.useState(false);
@@ -71,10 +82,10 @@ const Profile = () => {
 
     const EditHandler = () => {
         setAnchorEl(null);
-        // reset({
-        //     firstName: userProfile?.firstName,
-        //     lastName: userProfile?.lastName,
-        // });
+        reset({
+            firstName: firstName,
+            lastName: lastName,
+        });
         setOpened(true);
     };
 
@@ -87,9 +98,9 @@ const Profile = () => {
 
     const privacyClickHandler = () => {
         setAnchorEl(null);
-        // reset({
-        //     phoneNumber: userProfile?.phoneNumber,
-        // });
+        reset({
+            phoneNumber: phoneNumber,
+        });
         setPrivacyOpen(true);
         mutate({});
     };
@@ -102,7 +113,7 @@ const Profile = () => {
     useEffect(() => {
         if (image) {
             axios({
-                url: `${process.env.REACT_APP_BASE_URL}upload`,
+                url: `${process.env.REACT_APP_BASE_URL}/upload`,
                 method: "POST",
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -113,14 +124,21 @@ const Profile = () => {
                     type: "img",
                 },
             }).then((res) => {
-                setUploadedImg(res.data.data);
                 putMutate({
-                    imgUrl: res.data.data,
+                    image: res.data.data,
                 });
+                dispatch(
+                    setUserFunc({
+                        image: res.data.data,
+                        _id,
+                        phoneNumber: phoneNumber,
+                        // @ts-ignore
 
-            //     dispatch(
-            //         // getUserFunc({ ...userProfile, imgUrl: res.data.data })
-            //     );
+                        firstName: firstName,
+                        // @ts-ignore
+                        lastName: lastName,
+                    })
+                );
             });
         }
     }, [image]);
@@ -146,15 +164,18 @@ const Profile = () => {
             lastName: data?.lastName,
         });
 
-        // dispatch(
-        //     // getUserFunc({
-        //     //     ...userProfile,
-        //     //     // @ts-ignore
-        //     //     firstName: data.firstName,
-        //     //     // @ts-ignore
-        //     //     lastName: data?.lastName,
-        //     // })
-        // );
+        dispatch(
+            setUserFunc({
+                image: imageURL,
+                _id,
+                phoneNumber,
+                // @ts-ignore
+
+                firstName: data.firstName,
+                // @ts-ignore
+                lastName: data?.lastName,
+            })
+        );
     };
 
     const changedHandler = (e: any) => {
@@ -168,13 +189,16 @@ const Profile = () => {
             otp: inputVal,
         });
 
-        // dispatch(
-        //     getUserFunc({
-        //         ...userProfile,
-        //         // @ts-ignore
-        //         phoneNumber: data?.phoneNumber,
-        //     })
-        // );
+        dispatch(
+            setUserFunc({
+                firstName: firstName,
+                lastName: lastName,
+                image: imageURL,
+                // @ts-ignore
+                phoneNumber: data?.phoneNumber,
+                _id,
+            })
+        );
     };
 
     const props = {
@@ -259,29 +283,26 @@ const Profile = () => {
                                             : null
                                     }
                                 />
-                                <img 
-                                style={{objectFit: "cover"}}
-                                    src={`${process.env.REACT_APP_BASE_URL}public/uploads/${
-                                        uploadedImg ||
-                                        def
-                                    }`}
+
+                                <img
+                                    style={{ objectFit: "cover" }}
+                                    src={
+                                        imageURL
+                                            ? `${process.env.REACT_APP_BASE_URL}/public/uploads/${imageURL}`
+                                            : def
+                                    }
                                     alt="img"
                                 />
                             </div>
 
                             <div>
-                                <h2>
-                                    Shaxzod
-                                    {/* {userProfile?.firstName}{" "}
-                                    {userProfile.lastName} */}
-                                    Muradov
-                                </h2>
-                                <h3>901020440</h3>
+                                <h2>{firstName + " " + lastName}</h2>
+                                <h3>{phoneNumber}</h3>
                             </div>
                         </div>
 
                         <Button
-                        variant="outlined"
+                            variant="outlined"
                             id="basic-button"
                             aria-controls={open ? "basic-menu" : undefined}
                             aria-haspopup="true"
@@ -307,7 +328,9 @@ const Profile = () => {
                                 Edit Privacy
                             </MenuItem>
 
-                            <MenuItem color="warning" onClick={logOutHandler}>Logout</MenuItem>
+                            <MenuItem color="warning" onClick={logOutHandler}>
+                                Logout
+                            </MenuItem>
                         </Menu>
                         <Modal
                             sx={{ border: "none" }}
