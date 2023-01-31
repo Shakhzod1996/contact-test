@@ -21,6 +21,7 @@ const ContactSkeleton = () => {
                         <h4 style={{width: "140px"}}>
                             <Skeleton />
                         </h4>
+                        <p style={{width: "100px"}}><Skeleton /></p>
                     </div>
                 </div>
 
