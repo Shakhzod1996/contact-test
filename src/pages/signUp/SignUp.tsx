@@ -35,7 +35,7 @@ const SignUp = () => {
         
         
         mutate({
-            phoneNumber: "998901020440",
+            phoneNumber: inputArr.join(""),
             password,
             firstName,
             lastName

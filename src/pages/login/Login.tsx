@@ -40,6 +40,9 @@ const Login = () => {
             navigate("/");
             localStorage.setItem("token", data?.data.token);
             dispatch(setUserFunc(data?.data.data))
+        } else {
+            toast.error("Enter Valid Information");
+
         }
     }, [isSuccess]);
 
