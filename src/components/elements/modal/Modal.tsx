@@ -140,7 +140,7 @@ const Modal: React.FC<IModalProps> = ({
                 duration: 0.1,
                 type: "spring",
                 damping: 25,
-                stiffness: 500,
+                stiffness: 500, 
             },
         },
         exit: {
