@@ -43,7 +43,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "deploy": "scp -i deqwbnfRFVTsXcaWJUMk -r build root@5.161.134.59:/var/www/tmklandingadmin.roundedteam.uz",
+    "deploy": "scp -i deqwbnfRFVTsXcaWJUMk -r build root@5.161.134.59:/var/www/contact.muradovsh.uz",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
