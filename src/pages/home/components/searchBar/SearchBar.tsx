@@ -32,6 +32,9 @@ const SearchBar: React.FC<IPropsSearch> = ({
 
     // @ts-ignore
     const SortedArr = [...relationShipData?.data, { name: "all", _id: "all" }];
+    
+    console.log(SortedArr);
+    
     // ?Redux
     const dispatch = useDispatch();
     const { value } = useSelector((state: RootState) => state.sideBarData);
@@ -54,6 +57,7 @@ const SearchBar: React.FC<IPropsSearch> = ({
 
     const handleChange = (event: SelectChangeEvent) => {
         if (event.target.value === "all") {
+            SetSelecteDId("all")
             dispatch(getSelectedId(""));
         } else {
             SetSelecteDId(event.target.value);
