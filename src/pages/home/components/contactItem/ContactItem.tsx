@@ -47,6 +47,7 @@ const ContactItem: React.FC<IProps> = ({ setIsMOdalOpen, item, setEditId }) => {
                 <div>
                     <h3>{item.firstName + " " + item.lastName}</h3>
                     <h4>{item.phoneNumber}</h4>
+                    <p>{item.email}</p>
                 </div>
             </div>
 
