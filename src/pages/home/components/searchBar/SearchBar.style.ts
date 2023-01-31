@@ -28,11 +28,11 @@ export const SearchBarContainer = styled.div<IPropVisible> `
         }
     }
 
-    .css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+    .MuiInputLabel-root {
         color: #fff;
     }
     
-    .css-1d3z3hw-MuiOutlinedInput-notchedOutline {
+    .MuiOutlinedInput-notchedOutline {
         border: 1px solid #fff;
     }
 `
