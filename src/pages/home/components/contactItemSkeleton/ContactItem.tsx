@@ -5,7 +5,7 @@ import { ContactItemContainer } from "../ContactItem.style";
 
 const ContactSkeleton = () => {
 
-  const arr = [1,2,3,4,5,6,7] 
+  const arr = [1,2,3,4] 
     return (
       <>
       {arr.map((item) => {

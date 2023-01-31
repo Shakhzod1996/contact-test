@@ -1,16 +1,14 @@
+import { Tooltip } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useLocation } from "react-router-dom";
-import { Chip, Tooltip } from "@mui/material";
 
 import { RootState } from "../../features/store";
 import { SIDEBAR_CLOSE, SIDEBAR_OPEN } from "../../style/global.style";
 import { routes } from "./routes/routes";
 import { SidebarContainer } from "./Sidebar.style";
 import { openSideBarFunc } from "./SidebarSlice";
-import { useApiMutation } from "../../hooks";
-import {useEffect} from 'react'
 
 const Sidebar = () => {
 
