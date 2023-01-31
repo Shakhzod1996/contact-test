@@ -75,7 +75,7 @@ const Header = () => {
                 <div className="header-in">
                     <HeaderTitle />
                     <div className="header-container-flex">
-                        {pathname.includes("profile") ? null : (
+                        {pathname.includes("profile")|| pathname.includes("others")  ? null : (
                             <Button
                                 onClick={() => dispatch(changeStatusFunc())}
                                 variant="outlined"

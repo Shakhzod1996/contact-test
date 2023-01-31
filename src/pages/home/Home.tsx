@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import Modal from "../../components/elements/modal/Modal";
 import { IRelation } from "../../components/elements/modal/types/Relation.types";
 import { RootState } from "../../features/store";
@@ -13,32 +13,30 @@ import { HomeContainer } from "./Home.styled";
 import { IOneContact } from "./types/Contact.types";
 
 const Home = () => {
-    const dispatch = useDispatch();
+
     // !Hooks
     const [search, setSearchValue] = useState("");
     const [editId, setEditId] = useState<string | undefined>("");
+    const [isModalOpen, setIsMOdalOpen] = useState(false);
 
     // ! Redux data
     const { isBarOpen } = useSelector((state: RootState) => state.headerInfo);
     const { selectedId } = useSelector((state: RootState) => state.contacts);
 
     // ! Fetching Data
-    const { data, isSuccess, refetch, isLoading } = useApi<IOneContact[]>(
+    const { data, isSuccess, refetch, isFetching, status } = useApi<IOneContact[]>(
         "contact",
         {
             search,
-            relationshipId: selectedId
+            relationshipId: selectedId,
         }
     );
 
-    const { data: relationShipData, isSuccess: relateSuccess } =
+    const { data: relationShipData, isSuccess: relateSuccess, refetch: fetchRelation } =
         useApi<IRelation[]>("relationship");
-
-    
-
-
-    const [isModalOpen, setIsMOdalOpen] = useState(false);
-
+        
+            
+        
     return (
         <HomeContainer>
             <motion.div animate={{ width: "100%" }} className="chart-container">
@@ -50,7 +48,7 @@ const Home = () => {
                     editUrl="/contact"
                     refetch={refetch}
                     relationShipData={relationShipData}
-                    isSuccess={relateSuccess}
+                    fetchRelation={fetchRelation}
                 />
 
                 <SearchBar
@@ -61,11 +59,12 @@ const Home = () => {
                 {data?.data && data?.data.length > 0 ? (
                     <>
                         <DeleteModal
+                        fetchRelation={fetchRelation}
                             isModalOpen={isModalOpen}
                             setIsMOdalOpen={setIsMOdalOpen}
                             refetch={refetch}
                         />
-                        {isLoading ? (
+                        {isFetching ? (
                             <ContactSkeleton />
                         ) : (
                             <>

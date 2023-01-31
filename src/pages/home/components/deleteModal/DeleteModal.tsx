@@ -11,11 +11,13 @@ interface IPropsMOdal {
     isModalOpen: boolean;
     setIsMOdalOpen: Dispatch<SetStateAction<boolean>>;
     refetch: () => void
+    fetchRelation: () => void
 }
 const DeleteModal: React.FC<IPropsMOdal> = ({
     isModalOpen,
     setIsMOdalOpen,
-    refetch
+    refetch,
+    fetchRelation
 }) => {
     const dispatch = useDispatch();
     const { _id } = useSelector((state: RootState) => state.contacts);
@@ -47,6 +49,7 @@ const DeleteModal: React.FC<IPropsMOdal> = ({
             toast.success("deleted successfully");
             setIsMOdalOpen(false);
             refetch()
+            fetchRelation()
         }
     }, [isSuccess]);
 

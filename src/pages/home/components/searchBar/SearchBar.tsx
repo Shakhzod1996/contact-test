@@ -4,7 +4,7 @@ import {
     MenuItem,
     Select,
     SelectChangeEvent,
-    TextField
+    TextField,
 } from "@mui/material";
 import { AxiosResponse } from "axios";
 import { motion } from "framer-motion";
@@ -30,10 +30,10 @@ const SearchBar: React.FC<IPropsSearch> = ({
     const [visible, setVisible] = useState(true);
     const [selecteDId, SetSelecteDId] = useState("");
 
-// @ts-ignore
-    const SortedArr = [...relationShipData?.data, {name: "all", _id: "all"}]
+    // @ts-ignore
+    const SortedArr = [...relationShipData?.data, { name: "all", _id: "all" }];
     // ?Redux
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const { value } = useSelector((state: RootState) => state.sideBarData);
     // ? Hide and Show on scroll
     const { _id } = useSelector((state: RootState) => state.loginInfo);
@@ -53,17 +53,14 @@ const SearchBar: React.FC<IPropsSearch> = ({
     }
 
     const handleChange = (event: SelectChangeEvent) => {
-
         if (event.target.value === "all") {
-            
-            dispatch(getSelectedId(""))
+            dispatch(getSelectedId(""));
         } else {
             SetSelecteDId(event.target.value);
-        dispatch(getSelectedId(event.target.value))
+            dispatch(getSelectedId(event.target.value));
         }
-        
     };
-    
+
     return (
         <SearchBarContainer visible={visible}>
             <motion.div
@@ -77,8 +74,12 @@ const SearchBar: React.FC<IPropsSearch> = ({
                     sx={{ width: "70%" }}
                     variant="outlined"
                 />
-                <FormControl sx={{ width: "30%", marginLeft: "30px" }}>
-                    <InputLabel id="demo-simple-select-label">Relationship</InputLabel>
+                <FormControl
+                    disabled={relationShipData?.data && relationShipData?.data.length < 1}
+                sx={{ width: "30%", marginLeft: "30px" }}>
+                    <InputLabel id="demo-simple-select-label">
+                        Relationship
+                    </InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
@@ -87,7 +88,7 @@ const SearchBar: React.FC<IPropsSearch> = ({
                         onChange={handleChange}
                     >
                         {SortedArr.map((item) => {
-                            return(
+                            return (
                                 <MenuItem key={item._id} value={item._id}>
                                     {item.name}
                                 </MenuItem>

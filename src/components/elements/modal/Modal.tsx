@@ -19,7 +19,6 @@ import { ModalContainer } from "./Modal.style";
 // @ts-ignore
 import { BiCamera } from "react-icons/bi";
 import { toast } from "react-toastify";
-// @ts-ignore
 import axios, { AxiosResponse } from "axios";
 // @ts-ignore
 import def from "../../../assets/images/user.jpg";
@@ -37,7 +36,7 @@ interface IModalProps {
     editId: string | undefined;
     refetch: () => void;
     relationShipData: AxiosResponse<IRelation[], any> | undefined;
-    isSuccess: boolean;
+    fetchRelation: () => void
 }
 
 const Modal: React.FC<IModalProps> = ({
@@ -48,13 +47,10 @@ const Modal: React.FC<IModalProps> = ({
     editId,
     refetch,
     relationShipData,
-    isSuccess,
+    fetchRelation,
 }) => {
-    // ! redux
-    const { data: relationData } = useSelector(
-        (state: RootState) => state.relation
-    );
 
+    // ! redux
     const { _id } = useSelector((state: RootState) => state.loginInfo);
     const { selectedItems, editStatus } = useSelector(
         (state: RootState) => state.contacts
@@ -67,10 +63,10 @@ const Modal: React.FC<IModalProps> = ({
     const dispatch = useDispatch();
     const [image, setImage] = useState<File>();
     const [uploadedImg, setUploadedImg] = useState<string>("");
+    const [relationshipValue, setRelationshipValue] = useState("");
 
     // !Fetch Data
     const {
-        data: postData,
         isSuccess: postSuccess,
         mutate: postMutate,
     } = useApiMutation(postUrl, "post");
@@ -113,6 +109,7 @@ const Modal: React.FC<IModalProps> = ({
 
             refetch();
             ClearFunction();
+            fetchRelation()
         }
     }, [postSuccess]);
 
@@ -123,9 +120,13 @@ const Modal: React.FC<IModalProps> = ({
             refetch();
             ClearFunction();
             dispatch(editChangeStatus());
+            fetchRelation()
         }
     }, [putSuccess]);
-    
+
+        // @ts-ignore
+        const SortedArr = [...relationShipData?.data, { name: "empty", _id: "" }];
+
     // ? Animation
     const dropIn = {
         hidden: {
@@ -156,7 +157,9 @@ const Modal: React.FC<IModalProps> = ({
             lastName: "",
             phoneNumber: "",
             email: "",
+
         });
+        setRelationshipValue("")
         setEditIdlocal("");
         setEditId(undefined);
         setSelectId("");
@@ -211,6 +214,7 @@ const Modal: React.FC<IModalProps> = ({
                 userId: _id,
                 relationshipId: selectId,
                 image: uploadedImg || image,
+                relationshipName: relationshipValue
             });
         } else {
             postMutate({
@@ -221,6 +225,8 @@ const Modal: React.FC<IModalProps> = ({
                 userId: _id,
                 relationshipId: selectId,
                 image: uploadedImg || image,
+                relationshipName: relationshipValue
+
             });
         }
 
@@ -317,13 +323,13 @@ const Modal: React.FC<IModalProps> = ({
                                                                 : null
                                                         }
                                                     />
-
                                                     <img
                                                         src={
-                                                            editId &&
+                                                            
                                                             uploadedImg
                                                                 ? ` ${process.env.REACT_APP_BASE_URL}/public/uploads/${uploadedImg} `
-                                                                : editId && selectedItems.image
+                                                                : editId &&
+                                                                  selectedItems.image
                                                                 ? ` ${process.env.REACT_APP_BASE_URL}/public/uploads/${selectedItems.image} `
                                                                 : def
                                                         }
@@ -403,55 +409,87 @@ const Modal: React.FC<IModalProps> = ({
                                                 alignItems: "center",
                                             }}
                                         >
-                                            <FormControl
-                                                style={{
-                                                    width: `${
-                                                        editId ? "100%" : "60%"
-                                                    }`,
-                                                }}
-                                            >
-                                                <InputLabel
-                                                    sx={{ color: "#fff" }}
-                                                    id="demo-simple-select-label"
-                                                >
-                                                    Relationship
-                                                </InputLabel>
-                                                <Select
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    value={selectId}
-                                                    label="Age"
-                                                    onChange={handleChange}
-                                                >
-                                                    {relationShipData?.data.map(
-                                                        (item) => {
-                                                            return (
-                                                                <MenuItem
-                                                                    key={
-                                                                        item._id
-                                                                    }
-                                                                    value={
-                                                                        item._id
-                                                                    }
-                                                                >
-                                                                    {item.name}
-                                                                </MenuItem>
-                                                            );
-                                                        }
-                                                    )}
-                                                </Select>
-                                            </FormControl>
-                                            {editId ? null : <p>or</p>}
+                                            {SortedArr &&
+                                                SortedArr.length >
+                                                    1 ? (
+                                                    <FormControl
+                                                    disabled={relationshipValue.length > 0}
+                                                        style={{
+                                                            width: `${
+                                                                editId
+                                                                    ? "100%"
+                                                                    : "60%"
+                                                            }`,
+                                                        }}
+                                                    >
+                                                        <InputLabel
+                                                            sx={{
+                                                                color: "#fff",
+                                                            }}
+                                                            id="demo-simple-select-label"
+                                                        >
+                                                            Relationship
+                                                        </InputLabel>
+                                                        <Select
+                                                            labelId="demo-simple-select-label"
+                                                            id="demo-simple-select"
+                                                            value={selectId}
+                                                            label="Age"
+                                                            onChange={
+                                                                handleChange
+                                                            }
+                                                        >
+                                                            {SortedArr.map(
+                                                                (item) => {
+                                                                    return (
+                                                                        <MenuItem
+                                                                            key={
+                                                                                item._id
+                                                                            }
+                                                                            value={
+                                                                                item._id
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                item.name
+                                                                            }
+                                                                        </MenuItem>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        </Select>
+                                                    </FormControl>
+                                                ): null}
 
-                                            {editId ? null : (
+                                            {
+                                            (relationShipData?.data &&
+                                                relationShipData?.data.length <=
+                                                    0) ? null : (
+                                                <p>or</p>
+                                            )}
+
+                                            
                                                 <TextField
-                                                    style={{ width: "40%" }}
+                                                disabled={selectId ? true : false}
+                                                    style={{
+                                                        width: `${
+                                                            relationShipData?.data &&
+                                                            relationShipData
+                                                                ?.data.length <=
+                                                                0
+                                                                ? "100%"
+                                                                : "40%"
+                                                        }`,
+                                                    }}
                                                     name="relative"
+                                                    value={relationshipValue}
+                                                    
+                                                    onChange={(e)=>setRelationshipValue(e.target.value)}
                                                     label="Enter relationship"
                                                     variant="outlined"
                                                     type="text"
                                                 />
-                                            )}
+                                         
                                         </div>
                                     </div>
                                 </main>

@@ -19,13 +19,14 @@ interface IProps {
 }
 const ContactItem: React.FC<IProps> = ({ setIsMOdalOpen, item, setEditId }) => {
     const dispatch = useDispatch();
-    const { control, setValue, reset  } = useForm();
     
+    // ? Delete Button Clicked
     const deleteWindowOpen = (item: IOneContact) => {
         dispatch(getDeletedId(item._id));
         setIsMOdalOpen(true);
     };
 
+    // ? Edit Button clicked
     const editButtonClicked = (item: IOneContact) => {
         // @ts-ignore
         dispatch(getContactInfo(item))
