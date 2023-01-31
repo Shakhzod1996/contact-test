@@ -49,18 +49,22 @@ export const ModalContainer = styled.div`
         }
     }
 
-    .MuiInputBase-root {
+    .MuiFormLabel-root {
         color: #fff;
+    }
+    
+    .MuiInputBase-root-MuiOutlinedInput-root {
+        color: #fff;
+    }
+
+    .MuiOutlinedInput-root {
+        color: #fff;
+        fieldset {
+            border-color: #fff;
+            transition: all .2s ease;
+        }
         &:hover fieldset {
             border-color: #1976d2;
         }
-    }
-
-    .MuiInputLabel-root {
-        color: #fff;
-    }
-
-    .MuiOutlinedInput-notchedOutline {
-        border: 1px solid #fff;
     }
 `;

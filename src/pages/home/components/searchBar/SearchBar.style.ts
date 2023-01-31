@@ -21,18 +21,22 @@ export const SearchBarContainer = styled.div<IPropVisible> `
         padding: 1rem;
     }
 
-    .MuiInputBase-root {
-        color: #fff;
-        &:hover fieldset {
-            border-color: #1976d2;
-        }
-    }
-
-    .MuiInputLabel-root {
+    .MuiFormLabel-root {
         color: #fff;
     }
     
-    .MuiOutlinedInput-notchedOutline {
-        border: 1px solid #fff;
+    .MuiInputBase-root-MuiOutlinedInput-root {
+        color: #fff;
+    }
+
+    .MuiOutlinedInput-root {
+        color: #fff;
+        fieldset {
+            border-color: #fff;
+            transition: all .2s ease;
+        }
+        &:hover fieldset {
+            border-color: #1976d2;
+        }
     }
 `
